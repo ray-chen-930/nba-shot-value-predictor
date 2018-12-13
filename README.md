@@ -1,1 +1,3 @@
 # nba-shot-value-predictor
+
+Within the game of basketball, shot selection is a highly underrated component.  Yet coaches and players can all improve their chances of winning with a strong shot selection.  In this project, I will build a model to calculate a the value of a shot by multiplying the probability of the shot being made by the points type of the shot.  I find that using XGBoost is the most accurate algorithm to find the probability of the shot being made and use that in my final model.
