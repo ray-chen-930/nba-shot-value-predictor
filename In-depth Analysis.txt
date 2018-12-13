@@ -1,0 +1,68 @@
+﻿After performing the initial exploratory data analysis, I proceed by first splitting the data set into two, one for just two pointers and one for just three pointers.  By doing so, training models on both data sets separately will result in different weights and be more accurate towards just that type of shot.  Recall that the two different shots have a huge difference in shot made distribution, so splitting the data set should greatly improve model accuracy, even though this means every step afterwards is doubled.
+        I proceed by separating the y variable from the X variables.  As mentioned in the initial findings section, I will use ‘SHOT_NUMBER’, ‘DRIBBLES’, ‘TOUCH_TIME’, ‘SHOT_CLOCK’, ‘SHOT_DIST’, ‘CLOSE_DEF_DIST’, and ‘PTS_TYPE’ as my independent variables and ‘SHOT_RESULT’ as my dependent variable.  Recall that ‘SHOT_RESULT’ is boolean with true if the shot was made and false if the shot was missed.  Now I have two y vectors, one for two pointers and one for three pointers, along with two X matrices.  
+        I further split all four of these objects using scikit-learn’s train_test_split function to get training and testing observations for both the y and X variables for both two and three pointers, resulting in 8 pandas objects (series for the y and data frames for the X).  Before continuing, I checked the distributions of ‘SHOT_RESULT’ in the training set for both types of shots compared to the distribution for the testing sets to find that they are indeed very similar (48.72% true for 2 pointer training set vs 49.25% true for 2 pointer testing set and 35.20% true for 3 pointer training set vs 35.15% true for 3 pointer testing set).  This is ideal because it means the machine learning algorithms have less biased results when predicting.
+        With the data split accordingly, I proceed by using various algorithms to compare accuracy on the testing set, training time, and testing time.  The algorithms I fit onto my data are a naive Bayes classifier, a random forest, xgboost, and logistic regression.
+A naive Bayes classifier uses Bayes’ theorem and an assumption that the features are independent to give a probability of an observation belonging to a certain class. Like logistic regression, the naive Bayes classifier gives a probability distribution of the output, so a 58% accuracy means that the probabilities of 58% of these observations are closer to the actual observed outcome rather than the opposite.
+A random forest algorithm is the aggregation of many decision trees.  These different decision trees are all fit to the data, and the random forest takes the mean of the classifications of the individual trees.  Random forests are therefore more robust to overfitting.
+XGBoost is an ensemble method that takes weaker algorithms which, in this case, are decision trees and improves them with respect to a distribution and adds them onto the final, stronger algorithm. The iteratively added algorithms are weighted according to accuracy where misclassified input have higher weights. The future algorithms focus on the areas where previous algorithms have done poorly. 
+Logistic regression models a binary dependent variable by estimating the effects of the predictor variables on the log-odds of the dependent variable.  This model would seem appropriate as our predicted variable, shot_made, is binary.  The accuracy of 61% implies that, for the test set, 61% of the observations resulted in a log-odds probability of the dependent variable being closer to the observed value rather than its opposite.
+For each of these algorithms, I decided to measure the accuracy score, the training time, and the testing time.  The results of all these models are displayed in the table below:
+
+
+
+
+
+
+
+
+Algorithm  
+	Accuracy 
+	Training Time
+	Testing Time
+	Gaussian Naive Bayes (2) 
+	0.5788444368861868 
+	90.7 ms    
+	33.8 ms ms |
+
+
+	Gaussian Naive Bayes (3) 
+	0.6192049073964846  
+	33.4 ms  
+	13.9 ms ms
+
+
+	Random Forest  (2)      
+	0.6018876748437566  
+	1min 59s
+	153 ms 
+	Random Forest  (3)      
+	0.6484605402854784  
+	29.2 s 
+	112 ms  
+
+
+	XGBoost  (2)
+	0.6075847115343735  
+	2.08 s  
+	50.6 ms
+
+
+	XGBoost  (3)
+	0.6489324053320751  
+	 493 ms 
+	19.8 ms
+
+
+	Logistic Regression (2)
+	0.5943199693890566  
+	2min 5s   
+	8.5 m
+
+
+	Logistic Regression (3)
+	 0.6484605402854784  
+	1min 8s    
+	12.6 ms
+	
+
+It seems that, for all four algorithms used, the model for 3 pointers has an accuracy score around 4-5% than its 2 pointer counterpart.  Furthermore, out of these four algorithms, XGBoost seems to not only have the highest 2 pointer and 3 pointer accuracy, but also takes a significantly less time to train compared logistic regression and random forest.  Therefore, I will opt to use XGBoost as my final model.
